@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Document</title>
+</head>
+<style>
+	/*使用通配符将内外边距都设置为零, 这样看着好看*/
+*{
+    margin: 0px;
+    padding: 0px;
+}
+*{margin:0px;padding:0px;font-family:'迷你简卡通';}
+html,body{width:100%;height:100%;}
+ul{list-style:none;}
+img{border:0px;}
+#main{position:relative;}
+#main .box{padding:10px 0px 0px 10px;float:left;
+           }
+#main .box .img{padding:10px;box-shadow: 0 0 6px #ccc;border-radius: 5px;border:1px solid #ccc;}
+#main .box .img img{width:162px;height:auto}
+	
+</style>
+<body>
+	 <div id="main">
+        <div class="box">
+            <div class="img"><img src="images/0.jpg"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/1.png"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/2.jpg"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/3.jpg"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/4.jpg"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/5.jpg"/></div>
+        </div>        <div class="box">
+            <div class="img"><img src="images/6.jpg"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/7.jpg"/></div>
+        </div>        <div class="box">
+            <div class="img"><img src="images/8.jpg"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/9.jpg"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/10.jpg"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/11.jpg"/></div>
+        </div>        <div class="box">
+            <div class="img"><img src="images/12.jpg"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/13.jpg"/></div>
+        </div>
+                <div class="box">
+            <div class="img"><img src="images/14.jpg"/></div>
+        </div>
+        <div class="box">
+            <div class="img"><img src="images/15.jpg"/></div>
+        </div>
+        <div class="box">
+            <div class="img"><img src="images/16.jpg"/></div>
+        </div>
+        <div class="box">
+            <div class="img"><img src="images/17.jpg"/></div>
+        </div>
+        <div class="box">
+            <div class="img"><img src="images/18.jpg"/></div>
+        </div>    
+    </div>
+</body>
+</html>
+<script src="jq.js"></script>
+<script>
+	window.onload=function(){
+    var attr={'data':[{'src':'1.png'},{'src':'2.jpg'},{'src':'3.jpg'},{'src':'4.jpg'}]};
+    new Waterfull("main","box",attr).start()
+}
+function Waterfull(id,box,attr){
+    this.dataInt=attr;
+    this.id=id;
+    this.box=box;
+    this.num=6;
+}
+Waterfull.prototype={
+    start:function(){
+        var _this=this;
+        var oParent=document.getElementById(this.id);
+        var attr=getclass(oParent,this.box);
+        var iPinW=attr[0].offsetWidth;// 一个块框pin的宽
+        oParent.style.cssText='width:'+iPinW*this.num+'px;margin:0px auto;';
+        this.position1()//初始化加载HTML中的图片
+        window.onscroll=function(){
+            _this.scroll()
+        }
+    },
+    position1:function(){//图片DIV定位
+        var oParent=document.getElementById(this.id);
+        var attr=getclass(oParent,this.box);
+        var hattr=[];
+        for(var i=0;i<attr.length;i++){
+        if(i<this.num){
+            hattr.push(attr[i].offsetHeight)
+           }          
+        else{
+            var minH=Math.min.apply(null,hattr);//继承属性
+            var index=getindex(minH,hattr)
+            attr[i].style.position="absolute";
+            attr[i].style.left=attr[index].offsetLeft+"px";
+            attr[i].style.top=minH+"px";
+            hattr[index]+=attr[i].offsetHeight;
+            }
+        }    
+    },
+    checkscroll:function(){//判断是否加载
+        var oParent=document.getElementById(this.id);
+        var attr=getclass(oParent,this.box);
+        lastH=attr[attr.length-1].offsetTop+parseInt(attr[attr.length-1].offsetHeight/2);
+        scrolltop=document.documentElement.scrollTop||document.body.scrollTop;
+        client=document.documentElement.clientHeight;
+        return (lastH<client+scrolltop)?true:false        
+    },
+    scroll:function(){//加载
+        var oParent=document.getElementById(this.id);
+        var attr=getclass(oParent,this.box);
+        if(this.checkscroll()){
+                for(var i in this.dataInt.data){
+                var obox=document.createElement("div");
+                obox.className="box";
+                oParent.appendChild(obox)
+                var oimg=document.createElement("div");
+                oimg.className="img";
+                obox.appendChild(oimg);
+                var img=document.createElement("img");
+                img.src='images/'+this.dataInt.data[i].src;//dataInt["data"][i]也可
+                oimg.appendChild(img);
+            }                
+        }
+        this.position1()//加载图片后重新定位。    
+    }    
+}
+//获取CLASS函数
+function getclass(parent,className){
+    var obj=parent.getElementsByTagName('*');
+    var pinS=[];
+    for (var i=0;i<obj.length;i++) {
+        if (obj[i].className==className){
+            pinS.push(obj[i]);
+        }
+    };
+    return pinS;
+}
+//获取数组中一个值的索引。
+function getindex(a,hattr){
+    for(var i=0;i<hattr.length;i++){
+        if(hattr[i]==a){
+            return i
+        }
+    }
+}
+	
+</script>
